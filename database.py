@@ -1,10 +1,7 @@
 import sqlite3
+from datetime import datetime
 
 class data_base:
-    def __init__(self):
-        self.conn = None
-        self.cursor = None
-
     def Conecta(self):
         try:
             self.conn = sqlite3.connect('system.db')
@@ -20,6 +17,10 @@ class data_base:
                 print("Conexão com o banco de dados fechada.")
         except Exception as e:
             print(f"Erro ao fechar a conexão com o banco de dados: {e}")
+        data_entrega = datetime.now().strftime("%d/%m/%Y")
+        data_entrega = datetime.strptime(data_entrega, "%d/%m/%Y").strftime("%d/%m/%Y")
+
+
 
 
     # PRODUTO
@@ -32,11 +33,11 @@ class data_base:
         except Exception as e:
             print(f"Erro ao adicionar produto: {e}")
 
-    def remove_product(self, nome):
+    def remove_product(self, id_produto):
         try:
-            self.cursor.execute("DELETE FROM produtos WHERE nome=?", (nome,))
+            self.cursor.execute("DELETE FROM produtos WHERE id=?", (id_produto,))
             self.conn.commit()
-            print(f"Produto '{nome}' removido com sucesso!")
+            print(f"Produto com ID '{id_produto}' removido com sucesso!")
         except Exception as e:
             print(f"Erro ao remover produto: {e}")
 
@@ -61,9 +62,8 @@ class data_base:
 
     def get_clients(self):
         try:
-            # Seleciona o ID, nome e contato de cada cliente
             self.cursor.execute("SELECT id, nome, contato FROM cliente")
-            return self.cursor.fetchall()  # Retorna uma lista de tuplas (id, nome, contato)
+            return self.cursor.fetchall()
         except Exception as e:
             print(f"Erro ao obter clientes: {e}")
             return []
@@ -97,78 +97,55 @@ class data_base:
 
     # PEDIDOS
 
-    def insert_order(self, cliente, descricao, valor_und, quantidade, valor_total, data_de_entrega):
+    def get_pedidos(self):
+        self.cursor.execute('''
+            SELECT cliente, data_entrega, descricao, valor_und, quantidade, valor_total FROM pedidos
+        ''')
+        return self.cursor.fetchall()
+
+    def insert_order(self, cliente, data_entrega, descricao, valor_und, quantidade, valor_total):
         try:
-            self.cursor.execute(''' 
-                INSERT INTO Pedidos ("Nome do Cliente", "Descrição", "Detalhes", "Valor Und", "Quantidade", "Valor Total", "Data de Entrega")
-                VALUES (?, ?, ?, ?, ?, ?, ?)
-            ''', (cliente, descricao, valor_und, quantidade, valor_total, data_de_entrega))
+            self.cursor.execute('''
+                INSERT INTO pedidos (cliente, data_entrega, descricao, valor_und, quantidade, valor_total)
+                VALUES (?, ?, ?, ?, ?, ?)
+            ''', (cliente, data_entrega, descricao, valor_und, quantidade, valor_total))
             self.conn.commit()
+            print(f"Pedido para o cliente '{cliente}' adicionado com sucesso!")
         except sqlite3.IntegrityError:
             raise Exception(f'Já existe um pedido para o cliente: {cliente}')
         except Exception as e:
             print(f"Erro ao adicionar pedido: {e}")
 
-    def remove_order(self, nome_cliente):
+    def remove_order(self, id_pedido):
         try:
             self.cursor.execute('''
-                DELETE FROM Pedidos WHERE "Nome do Cliente" = ?
-            ''', (nome_cliente,))
+                DELETE FROM pedidos WHERE id = ?
+            ''', (id_pedido,))
             self.conn.commit()
+            print(f"Pedido com ID '{id_pedido}' removido com sucesso!")
         except Exception as e:
             print(f"Erro ao remover pedido: {e}")
 
-    def update_order(self, nome_cliente, descricao, valor_und, quantidade, valor_total, data_de_entrega):
+    def update_order(self, id_pedido, cliente, data_entrega, descricao, valor_und, quantidade, valor_total):
         try:
             self.cursor.execute('''
-                UPDATE Pedidos
-                SET "Descrição" = ?, "Valor Und" = ?, "Quantidade" = ?, "Valor Total" = ?, "Data de Entrega" = ?
-                WHERE "Nome do Cliente" = ?
-            ''', (descricao, valor_und, quantidade, valor_total, data_de_entrega, nome_cliente))
-            self.conn.commit()
-        except Exception as e:
-            print(f"Erro ao atualizar pedido: {e}")
-
-
-    # HISTORICO
-
-    def insert_historico(self, cliente, descricao, valor_und, quantidade, valor_total, data_entrega, data_historico, hora_historico):
-        try:
-            self.cursor.execute('''
-                INSERT INTO historico (cliente, descricao, valor_und, quantidade, valor_total, data_entrega, data_historico, hora_historico)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            ''', (cliente, descricao, valor_und, quantidade, valor_total, data_entrega, data_historico, hora_historico))
-            self.conn.commit()
-            print(f"Registro de histórico para o cliente '{cliente}' inserido com sucesso.")
-        except Exception as e:
-            print(f"Erro ao inserir no histórico: {e}")
-
-    def update_historico(self, id_historico, cliente, descricao, valor_und, quantidade, valor_total, data_entrega, data_historico, hora_historico):
-        try:
-            self.cursor.execute('''
-                UPDATE historico
-                SET cliente = ?, descricao = ?, valor_und = ?, quantidade = ?, valor_total = ?, data_entrega = ?, data_historico = ?, hora_historico = ?
+                UPDATE pedidos
+                SET cliente = ?, data_entrega = ?, descricao = ?, valor_und = ?, quantidade = ?, valor_total = ?
                 WHERE id = ?
-            ''', (cliente, descricao, valor_und, quantidade, valor_total, data_entrega, data_historico, hora_historico, id_historico))
+            ''', (cliente, data_entrega, descricao, valor_und, quantidade, valor_total, id_pedido))
             self.conn.commit()
-            print(f"Registro de histórico com ID {id_historico} atualizado com sucesso.")
+            print(f"Pedido com ID '{id_pedido}' alterado com sucesso!")
         except Exception as e:
-            print(f"Erro ao atualizar o histórico: {e}")
+            print(f"Erro ao alterar pedido: {e}")
 
-    def remove_historico(self, id_historico):
-        try:
-            self.cursor.execute('''
-                DELETE FROM historico WHERE id = ?
-            ''', (id_historico,))
-            self.conn.commit()
-            print(f"Registro de histórico com ID {id_historico} removido com sucesso.")
-        except Exception as e:
-            print(f"Erro ao remover o histórico: {e}")
 
-    def get_historico(self):
-        try:
-            self.cursor.execute("SELECT * FROM historico")
-            return self.cursor.fetchall()
-        except Exception as e:
-            print(f"Erro ao buscar histórico: {e}")
-            return []
+    # # HISTORICO
+
+
+    # def get_historico(self):
+    #     try:
+    #         self.cursor.execute("SELECT * FROM historico")
+    #         return self.cursor.fetchall()
+    #     except Exception as e:
+    #         print(f"Erro ao buscar histórico: {e}")
+    #         return []
