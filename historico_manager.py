@@ -2,7 +2,6 @@ import sqlite3
 from datetime import datetime
 from PyQt5.QtWidgets import QTableWidgetItem, QMessageBox
 
-
 class HistoricoManager:
     def consultar_historico(self, cliente, data_inicio, data_fim):
         try:

@@ -38,7 +38,7 @@ color:rgb(235, 235, 235);
      <widget class="QFrame" name="left_menu">
       <property name="maximumSize">
        <size>
-        <width>180</width>
+        <width>0</width>
         <height>16777215</height>
        </size>
       </property>
@@ -197,8 +197,8 @@ QPushButton:hover{
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>170</width>
-               <height>505</height>
+               <width>79</width>
+               <height>99</height>
               </rect>
              </property>
              <attribute name="label">
@@ -624,7 +624,7 @@ color: rgb(0, 0, 0);</string>
              <cursorShape>PointingHandCursor</cursorShape>
             </property>
             <property name="currentIndex">
-             <number>4</number>
+             <number>0</number>
             </property>
             <widget class="QWidget" name="pg_home">
              <layout class="QVBoxLayout" name="verticalLayout_7">

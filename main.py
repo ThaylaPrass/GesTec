@@ -59,10 +59,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             print("Erro: A conexão ou o cursor não foram inicializados corretamente.")
             return
 
-        if not self.db.conn or not self.db.cursor:
-            print("Erro: A conexão ou o cursor não foram inicializados corretamente.")
-            return
-
         self.historico_manager = HistoricoManager()
 
         self.btn_gerar_relatorio = self.findChild(QPushButton, 'btn_gerar_relatorio')
@@ -83,6 +79,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 print("Erro: tableWidget_historico não encontrado dentro de pg_historico!")
         else:
             print("Erro: pg_historico não encontrado!")
+
 
        
 
@@ -226,36 +223,34 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             cursor = cn.cursor()
 
             # Tenta obter os clientes da tabela 'cliente'
-            cursor.execute("SELECT nome FROM cliente")  # Alterei 'clientes' para 'cliente'
+            cursor.execute("SELECT nome FROM cliente")
             clientes = cursor.fetchall()
 
             # Preenche o ComboBox principal (comboBox_clientes)
-            self.comboBox_clientes.clear()  # Limpa o ComboBox antes de adicionar novos itens
+            self.comboBox_clientes.clear()
             if clientes:
                 for cliente in clientes:
-                    self.comboBox_clientes.addItem(cliente[0])  # Adiciona cada cliente ao ComboBox
+                    self.comboBox_clientes.addItem(cliente[0])
             else:
-                self.comboBox_clientes.addItem("Nenhum cliente encontrado")  # Se não houver clientes, exibe uma mensagem
+                self.comboBox_clientes.addItem("Nenhum cliente encontrado")
 
             # Preenche o ComboBox de histórico (comboBox_clientes_historico) de forma similar
-            self.comboBox_clientes_historico.clear()  # Limpa o ComboBox do histórico antes de adicionar novos itens
+            self.comboBox_clientes_historico.clear()
             if clientes:
                 for cliente in clientes:
-                    self.comboBox_clientes_historico.addItem(cliente[0])  # Adiciona cada cliente ao ComboBox
+                    self.comboBox_clientes_historico.addItem(cliente[0])
             else:
-                self.comboBox_clientes_historico.addItem("Nenhum cliente encontrado")  # Se não houver clientes, exibe uma mensagem
+                self.comboBox_clientes_historico.addItem("Nenhum cliente encontrado")
 
             cn.close()
 
         except sqlite3.OperationalError as e:
-            # Se houve erro ao acessar o banco de dados, mostra erro no ComboBox
             print(f"Erro ao acessar banco de dados: {e}")
             self.comboBox_clientes.clear()
             self.comboBox_clientes.addItem("Erro ao acessar o banco de dados.")
             self.comboBox_clientes_historico.clear()
             self.comboBox_clientes_historico.addItem("Erro ao acessar o banco de dados.")
         except Exception as e:
-            # Caso outro erro aconteça
             print(f"Erro ao preencher ComboBox de clientes: {e}")
             self.comboBox_clientes.clear()
             self.comboBox_clientes.addItem("Erro desconhecido ao carregar clientes.")
@@ -277,9 +272,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             print("Erro: QTableWidget não está disponível.")
             return
 
-        # Abrir a página `pg_historico`
-        self.pg_historico.setVisible(True)
-
         cliente = self.get_cliente()
         data_inicio = self.get_data_inicio()
         data_fim = self.get_data_fim()
@@ -300,15 +292,21 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             clientes = self.db.get_clients()  # Obtenha a lista de clientes do banco de dados
 
             # Preencher o QComboBox com os nomes dos clientes
-            self.comboBox_clientes.clear()  # Limpa o QComboBox antes de adicionar
-            self.comboBox_clientes.addItem("Selecione um cliente")  # Adiciona um item padrão
+            self.comboBox_clientes.clear()
+            self.comboBox_clientes.addItem("Selecione um cliente")
             for _, nome, _ in clientes:
-                self.comboBox_clientes.addItem(nome)  # Adiciona cada nome ao combo box
+                self.comboBox_clientes.addItem(nome)
+
+            # Preencher o QComboBox de histórico com os nomes dos clientes
+            self.comboBox_clientes_historico.clear()
+            self.comboBox_clientes_historico.addItem("Selecione um cliente")
+            for _, nome, _ in clientes:
+                self.comboBox_clientes_historico.addItem(nome)
 
             # Atualiza a tabela de clientes
-            self.table_cliente.setRowCount(len(clientes))  # Define o número de linhas da tabela
-            self.table_cliente.setColumnCount(3)  # Defina o número de colunas (ajuste conforme necessário)
-            self.table_cliente.setHorizontalHeaderLabels(['ID', 'Nome', 'Contato'])  # Defina os cabeçalhos das colunas
+            self.table_cliente.setRowCount(len(clientes))
+            self.table_cliente.setColumnCount(3)
+            self.table_cliente.setHorizontalHeaderLabels(['ID', 'Nome', 'Contato'])
 
             for row_idx, (id_cliente, nome, contato) in enumerate(clientes):
                 self.table_cliente.setItem(row_idx, 0, QTableWidgetItem(str(id_cliente)))
@@ -321,7 +319,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         except Exception as e:
             print(f"Erro ao carregar clientes: {e}")
-
 
 
     
@@ -390,7 +387,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
 
             # PEDIDOS
-            
 
 
     def carregar_pedidos(self):
