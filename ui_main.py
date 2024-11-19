@@ -27,7 +27,7 @@ class Ui_MainWindow(object):
 "}")
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout_13 = QtWidgets.QGridLayout(self.centralwidget)
-        self.gridLayout_13.setContentsMargins(0, -1, 0, -1)
+        self.gridLayout_13.setContentsMargins(0, -1, 7, -1)
         self.gridLayout_13.setObjectName("gridLayout_13")
         self.left_menu = QtWidgets.QFrame(self.centralwidget)
         self.left_menu.setMaximumSize(QtCore.QSize(0, 16777215))
@@ -111,7 +111,7 @@ class Ui_MainWindow(object):
 "}")
         self.toolBox.setObjectName("toolBox")
         self.page_cadastro = QtWidgets.QWidget()
-        self.page_cadastro.setGeometry(QtCore.QRect(0, 0, 79, 99))
+        self.page_cadastro.setGeometry(QtCore.QRect(0, 0, 170, 505))
         self.page_cadastro.setObjectName("page_cadastro")
         self.verticalLayout_4 = QtWidgets.QVBoxLayout(self.page_cadastro)
         self.verticalLayout_4.setContentsMargins(0, 0, 0, 0)
@@ -1056,7 +1056,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
-        self.toolBox.setCurrentIndex(1)
+        self.toolBox.setCurrentIndex(0)
         self.Pages.setCurrentIndex(0)
         self.tab_cliente.setCurrentIndex(1)
         self.tab_pedido.setCurrentIndex(1)
@@ -1139,4 +1139,3 @@ class Ui_MainWindow(object):
         self.btn_pdf.setText(_translate("MainWindow", "Gerar PDF"))
         self.btn_excel.setText(_translate("MainWindow", "Gerar EXCEL"))
         self.label_2.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:11pt;\">º GESTEC 2024</span></p></body></html>"))
-

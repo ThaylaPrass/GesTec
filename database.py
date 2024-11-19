@@ -142,10 +142,5 @@ class data_base:
     # # HISTORICO
 
 
-    # def get_historico(self):
-    #     try:
-    #         self.cursor.execute("SELECT * FROM historico")
-    #         return self.cursor.fetchall()
-    #     except Exception as e:
-    #         print(f"Erro ao buscar histórico: {e}")
-    #         return []
+
+    

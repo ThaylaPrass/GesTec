@@ -45,7 +45,6 @@ class Login(QWidget, Ui_Form):
 
 
 
-
 class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
@@ -59,32 +58,22 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             print("Erro: A conexão ou o cursor não foram inicializados corretamente.")
             return
 
+        self.btn_gerar_relatorio.clicked.connect(lambda: self.Pages.setCurrentWidget(self.pg_historico))
+        self.table_historico = self.findChild(QTableWidget, 'tableWidget_historico')
+
         self.historico_manager = HistoricoManager()
-
-        self.btn_gerar_relatorio = self.findChild(QPushButton, 'btn_gerar_relatorio')
-        if self.btn_gerar_relatorio:
-            self.btn_gerar_relatorio.clicked.connect(self.filtrar_e_abrir_historico)
-
-        self.comboBox_clientes_historico = self.findChild(QComboBox, 'comboBox_clientes_historico')
-        self.calendar_inicio = self.findChild(QCalendarWidget, 'calendar_inicio')
-        self.calendar_fim = self.findChild(QCalendarWidget, 'calendar_fim')
-
-        self.pg_historico = self.findChild(QWidget, 'pg_historico')
-        if self.pg_historico:
-            self.table_historico = self.pg_historico.findChild(QTableWidget, 'tableWidget_historico')
-            if self.table_historico:
-                self.table_historico.setVisible(False)
-                print("QTableWidget encontrado com sucesso!")
-            else:
-                print("Erro: tableWidget_historico não encontrado dentro de pg_historico!")
-        else:
-            print("Erro: pg_historico não encontrado!")
-
-
-       
-
-
         
+        self.btn_excel = self.findChild(QPushButton, 'btn_excel')
+        if self.btn_excel:
+            self.btn_excel.clicked.connect(self.acao_exportar_para_excel)
+
+        self.btn_pdf = self.findChild(QPushButton, 'btn_pdf')
+        if self.btn_pdf:
+            self.btn_pdf.clicked.connect(self.acao_exportar_para_pdf)
+
+
+
+          
 
        
         ##############################################
@@ -206,7 +195,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             newWidth = 0
 
         self.animation = QtCore.QPropertyAnimation(self.left_menu, b"maximumWidth")
-        self.animation.setDuration(500)  # Define a duração da animação em 500 milissegundos
+        self.animation.setDuration(350)  # Define a duração da animação 
         self.animation.setStartValue(width)
         self.animation.setEndValue(newWidth)
         self.animation.setEasingCurve(QtCore.QEasingCurve.InOutQuart)
@@ -258,6 +247,49 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.comboBox_clientes_historico.addItem("Erro desconhecido ao carregar clientes.")
 
 
+    
+    
+        # HISTORICO
+
+        
+        self.tableWidget_historico = QTableWidget()
+        self.setup_table()
+
+        self.btn_gerar_relatorio = self.findChild(QPushButton, 'btn_gerar_relatorio')
+        if self.btn_gerar_relatorio:
+            self.btn_gerar_relatorio.clicked.connect(self.filtrar_e_abrir_historico)
+
+        self.comboBox_clientes_historico = self.findChild(QComboBox, 'comboBox_clientes_historico')
+        self.calendar_inicio = self.findChild(QCalendarWidget, 'calendar_inicio')
+        self.calendar_fim = self.findChild(QCalendarWidget, 'calendar_fim')
+
+        self.pg_historico = self.findChild(QWidget, 'pg_historico')
+        if self.pg_historico:
+            self.table_historico = self.pg_historico.findChild(QTableWidget, 'tableWidget_historico')
+            if self.table_historico:
+                print("QTableWidget encontrado com sucesso!")
+            else:
+                print("Erro: tableWidget_historico não encontrado dentro de pg_historico!")
+        else:
+            print("Erro: pg_historico não encontrado!")
+
+        # Sempre tornar a página e a tabela visíveis
+        if self.pg_historico:
+            self.pg_historico.setVisible(True)
+        if self.table_historico:
+            self.table_historico.setVisible(True)
+
+    def setup_table(self):
+        self.tableWidget_historico.setColumnCount(7)  # Defina o número de colunas
+        self.tableWidget_historico.setHorizontalHeaderLabels(['ID', 'Data de Entrega', 'Cliente', 'Descrição', 'Valor Unidade', 'Quantidade', 'Valor Total'])
+
+    def preencher_tabela(self, resultados):
+        for row_idx, row_data in enumerate(resultados):
+            self.tableWidget_historico.insertRow(row_idx)
+            for col_idx, col_data in enumerate(row_data):
+                self.tableWidget_historico.setItem(row_idx, col_idx, QTableWidgetItem(str(col_data)))
+        
+
     def get_cliente(self):
         return self.comboBox_clientes_historico.currentText()
 
@@ -281,9 +313,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         print(f"Data Fim: {data_fim}")
 
         self.historico_manager.exibir_historico(self.table_historico, cliente, data_inicio, data_fim)
-        self.table_historico.setVisible(True)
 
 
+    
+    def acao_exportar_para_excel(self):
+        # Chama o método da classe HistoricoManager passando a tabela
+        self.historico_manager.exportar_para_excel(self.table_historico)
+
+
+    def acao_exportar_para_pdf(self):
+        self.historico_manager.exportar_para_pdf(self.table_historico)
+
+    
     # CLIENTE
             
 
@@ -662,8 +703,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    # window = Login()
-    window = MainWindow()
+    window = Login()
+    # window = MainWindow()
     window.show()
     sys.exit(app.exec_())
 

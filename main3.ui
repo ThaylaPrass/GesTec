@@ -32,7 +32,7 @@ color:rgb(235, 235, 235);
      <number>0</number>
     </property>
     <property name="rightMargin">
-     <number>0</number>
+     <number>7</number>
     </property>
     <item row="0" column="0">
      <widget class="QFrame" name="left_menu">
@@ -190,15 +190,15 @@ QPushButton:hover{
 }</string>
             </property>
             <property name="currentIndex">
-             <number>1</number>
+             <number>0</number>
             </property>
             <widget class="QWidget" name="page_cadastro">
              <property name="geometry">
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>79</width>
-               <height>99</height>
+               <width>170</width>
+               <height>505</height>
               </rect>
              </property>
              <attribute name="label">
@@ -527,7 +527,7 @@ color: rgb(0, 0, 0);</string>
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="icons/icons_.qrc">
+             <iconset>
               <normaloff>:/icon/menu2.png</normaloff>:/icon/menu2.png</iconset>
             </property>
             <property name="iconSize">
@@ -2916,8 +2916,6 @@ QPushButton:hover{
    </layout>
   </widget>
  </widget>
- <resources>
-  <include location="icons/icons_.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>
