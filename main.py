@@ -13,10 +13,8 @@ import pandas as pd
 
 
 
+
 #LOGIN
-
-
-
 
 
 class Login(QWidget, Ui_Form):
@@ -93,10 +91,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
           
         # Acesso aos widgets da página de produtos
      
-        
-        
         self.lineEdit_nome_produto = self.findChild(QLineEdit, 'lineEdit_nome_produto')  
-        self.lineEdit_quantidade_produto = self.findChild(QLineEdit, 'lineEdit_quantidaproduto')  
+        self.lineEdit_quantidade_produto = self.findChild(QLineEdit, 'lineEdit_quantidade_produto')  
         self.btn_salvar_produto = self.findChild(QPushButton, 'btn_salvar_produto')  
         self.btn_deletar_produto = self.findChild(QPushButton, 'btn_deletar_produto')  
         self.btn_alterar_produto = self.findChild(QPushButton, 'btn_alterar_produto') 
@@ -105,6 +101,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         
         self.table_produtos = self.findChild(QTableWidget, 'tableWidget_produtos')
         
+
+
    
         # Acesso aos widgets da página de clientes
         
@@ -118,15 +116,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.table_cliente = self.findChild(QTableWidget, 'tableWidget_cliente')
 
 
+
+
         # Acesso aos widgets da página de pedidos
        
-        
-
         self.lineEdit_pedido_descricao = self.findChild(QLineEdit, 'lineEdit_pedido_descricao')
         self.lineEdit_valor_und = self.findChild(QLineEdit, 'lineEdit_valor_und') 
         self.lineEdit_valor_total = self.findChild(QLineEdit, 'lineEdit_valor_total') 
         self.lineEdit_pedidos_quantidade = self.findChild(QLineEdit, 'lineEdit_pedidos_quantidade')
-        self.lineEdit_pedido_nome = self.findChild(QLineEdit, 'lineEdit_pedidos_nome')
+        self.lineEdit_pedido_nome = self.findChild(QLineEdit, 'lineEdit_pedido_nome')
         # self.lineEdit_pedido_cliente = self.findChild(QLineEdit, 'lineEdit_pedido_cliente')
         self.comboBox_clientes = self.findChild(QComboBox, 'comboBox_clientes')        
         self.lineEdit_data_entrega = self.findChild(QLineEdit, 'lineEdit_data_entrega') 
@@ -174,7 +172,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             valor_und = float(self.lineEdit_valor_und.text().strip()) if self.lineEdit_valor_und.text() else 0
             quantidade = int(self.lineEdit_pedidos_quantidade.text().strip()) if self.lineEdit_pedidos_quantidade.text() else 0
             valor_total = valor_und * quantidade
-            self.lineEdit_valor_total.setText(f"{valor_total:.2f}")  # Atualiza o valor total
+            self.lineEdit_valor_total.setText(f"{valor_total:.2f}")  
         except ValueError:
             self.lineEdit_valor_total.setText("0.00")  # Se os campos não forem números, define como 0
 
@@ -216,7 +214,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             cursor.execute("SELECT nome FROM cliente")
             clientes = cursor.fetchall()
 
-            # Preenche o ComboBox principal (comboBox_clientes)
+            # Preenche o comboBox_clientes
             self.comboBox_clientes.clear()
             if clientes:
                 for cliente in clientes:
@@ -224,7 +222,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             else:
                 self.comboBox_clientes.addItem("Nenhum cliente encontrado")
 
-            # Preenche o ComboBox de histórico (comboBox_clientes_historico) de forma similar
+            # Preenche o ComboBox de histórico 
             self.comboBox_clientes_historico.clear()
             if clientes:
                 for cliente in clientes:
@@ -318,7 +316,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     
     def acao_exportar_para_excel(self):
-        # Chama o método da classe HistoricoManager passando a tabela
         self.historico_manager.exportar_para_excel(self.table_historico)
 
 
@@ -331,7 +328,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def carregar_clientes(self):
         try:
-            clientes = self.db.get_clients()  # Obtenha a lista de clientes do banco de dados
+            clientes = self.db.get_clients()  #  lista de clientes do banco de dados
 
             # Preencher o QComboBox com os nomes dos clientes
             self.comboBox_clientes.clear()
@@ -345,7 +342,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             for _, nome, _ in clientes:
                 self.comboBox_clientes_historico.addItem(nome)
 
-            # Atualiza a tabela de clientes
+            
             self.table_cliente.setRowCount(len(clientes))
             self.table_cliente.setColumnCount(3)
             self.table_cliente.setHorizontalHeaderLabels(['ID', 'Nome', 'Contato'])
@@ -370,12 +367,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def adicionar_cliente(self):
         try:
-            nome = self.lineEdit_nome_cliente.text().strip()  # Remove espaços em branco das extremidades
+            nome = self.lineEdit_nome_cliente.text().strip()  
             contato = self.lineEdit_contato_cliente.text().strip()
 
-            if nome and contato:  # Verifica se ambos os campos estão preenchidos
-                self.db.insert_client(nome, contato)  # O ID será gerado automaticamente
-                self.carregar_clientes()  # Atualiza a tabela de clientes
+            if nome and contato:
+                self.db.insert_client(nome, contato) 
+                self.carregar_clientes() 
                 self.lineEdit_nome_cliente.clear()
                 self.lineEdit_contato_cliente.clear()
                 QMessageBox.information(self, 'Sucesso', 'Cliente cadastrado com sucesso!')
@@ -391,13 +388,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         try:
             selected_items = self.table_cliente.selectedItems()
             if selected_items:
-                id_cliente = selected_items[0].text()  # ID do cliente selecionado
+                id_cliente = selected_items[0].text() 
                 nome = self.lineEdit_nome_cliente.text().strip()
                 contato = self.lineEdit_contato_cliente.text().strip()
 
-                if nome and contato:  # Verifica se ambos os campos estão preenchidos
-                    self.db.update_client(id_cliente, nome, contato)  # Atualiza pelo ID
-                    self.carregar_clientes()  # Atualiza a tabela de clientes
+                if nome and contato:  
+                    self.db.update_client(id_cliente, nome, contato)  
+                    self.carregar_clientes()  
                     self.lineEdit_nome_cliente.clear()
                     self.lineEdit_contato_cliente.clear()
                     QMessageBox.information(self, 'Sucesso', 'Cliente atualizado com sucesso!')
@@ -415,9 +412,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         try:
             selected_items = self.table_cliente.selectedItems()
             if selected_items:
-                id_cliente = selected_items[0].text()  # ID do cliente selecionado
-                self.db.remove_client(id_cliente)  # Deleta pelo ID
-                self.carregar_clientes()  # Atualiza a tabela de clientes
+                id_cliente = selected_items[0].text()  
+                self.db.remove_client(id_cliente) 
+                self.carregar_clientes()  
                 QMessageBox.information(self, 'Sucesso', 'Cliente removido com sucesso!')
             else:
                 QMessageBox.warning(self, 'Erro', 'Por favor, selecione um cliente para remover.')
@@ -439,7 +436,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             self.table_pedidos.setRowCount(len(result))
             self.table_pedidos.setColumnCount(len(result.columns))
-            self.table_pedidos.setHorizontalHeaderLabels(['ID', 'Cliente', 'Data de Entrega', 'Descrição', 'Valor Unitário', 'Quantidade', 'Valor Total'])
+            self.table_pedidos.setHorizontalHeaderLabels(['ID', 'Cliente', 'Data de Entrega', 'Nome do Pedido', 'Descrição', 'Valor Unitário', 'Quantidade', 'Valor Total'])
 
             for row_idx, row in result.iterrows():
                 for col_idx, value in enumerate(row):
@@ -464,7 +461,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             valor_total = self.lineEdit_valor_total.text().strip() if self.lineEdit_valor_total is not None else None
             
 
-            # Adiciona prints para verificar os valores
+            
             
             print(f"Cliente: {cliente}")
             print(f"Data de Entrega: {data_entrega}")
@@ -485,7 +482,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     return
                 
                 self.db.insert_order(cliente, data_entrega, nome_pedido, descricao, valor_und, quantidade, valor_total)
-                self.carregar_pedidos()  # Atualiza a tabela de pedidos
+                self.carregar_pedidos()  
                 self.lineEdit_data_entrega.clear()
                 self.lineEdit_pedido_nome.clear()
                 self.lineEdit_pedido_descricao.clear()
@@ -502,7 +499,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def alterar_pedido(self):
         try:
-            # Pega os dados da interface (campos de texto)
             
             cliente = self.comboBox_clientes.currentText().strip() if self.comboBox_clientes is not None else None
             data_entrega = self.lineEdit_data_entrega.text().strip() if self.lineEdit_data_entrega is not None else None
@@ -513,23 +509,23 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             valor_total = self.lineEdit_valor_total.text().strip() if self.lineEdit_valor_total is not None else None
             
             
-            # Garantir que todos os campos estão preenchidos
+            
             if cliente and data_entrega and nome_pedido and descricao and valor_und and quantidade and valor_total:
-                # Pega o ID do pedido selecionado na tabela
+                
                 selected_items = self.table_pedidos.selectedItems()
                 if selected_items:
-                    id_pedido = selected_items[0].text()  # ID do pedido selecionado
+                    id_pedido = selected_items[0].text() 
 
-                    # Chama o método de update (alteração) no banco de dados
+                    
                     self.db.update_order( id_pedido, cliente, data_entrega, nome_pedido, descricao, valor_und, quantidade, valor_total)
                     
-                    # Atualiza a tabela de pedidos após a alteração
+                    
                     self.carregar_pedidos()
 
-                    # Limpa os campos após a alteração
+                    
                     self.limpar_campos_pedido()
 
-                    # Mensagem de sucesso
+                    
                     QMessageBox.information(self, 'Sucesso', 'Pedido alterado com sucesso!')
                 else:
                     QMessageBox.warning(self, 'Erro', 'Por favor, selecione um pedido para alterar.')
@@ -545,11 +541,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         try:
             selected_items = self.table_pedidos.selectedItems()
             if selected_items:
-                id_pedido = selected_items[0].text()  # ID do pedido selecionado
-                self.db.remove_order(id_pedido)  # Deleta o pedido pelo ID
+                id_pedido = selected_items[0].text() 
+                self.db.remove_order(id_pedido)  
 
-                # Atualize a tabela de pedidos após a remoção
-                self.carregar_pedidos()  # Recarga os dados da tabela
+                self.carregar_pedidos() 
 
                 QMessageBox.information(self, 'Sucesso', 'Pedido removido com sucesso!')
             else:
@@ -653,14 +648,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def adicionar_produto(self):
         try:
-            nome = self.lineEdit_nome_produto.text().strip()  # Remover espaços em branco
+            nome = self.lineEdit_nome_produto.text().strip()  
             quantidade = self.lineEdit_quantidade_produto.text().strip()
 
-            if nome and quantidade.isdigit():  # Verifica se quantidade é um número válido
-                self.db.insert_product(nome, int(quantidade))  # Insere o produto no banco de dados
-                self.carregar_produtos()  # Atualiza a tabela de produtos
-                self.lineEdit_nome_produto.clear()  # Limpa o campo de nome
-                self.lineEdit_quantidade_produto.clear()  # Limpa o campo de quantidade
+            if nome and quantidade.isdigit():  
+                self.db.insert_product(nome, int(quantidade)) 
+                self.carregar_produtos()  
+                self.lineEdit_nome_produto.clear() 
+                self.lineEdit_quantidade_produto.clear() 
                 QMessageBox.information(self, 'Sucesso', 'Produto cadastrado com sucesso!')
             else:
                 QMessageBox.warning(self, 'Erro', 'Por favor, preencha todos os campos corretamente.')
@@ -674,9 +669,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         try:
             selected_items = self.table_produtos.selectedItems()
             if selected_items:
-                id_produto = selected_items[0].text()  # Pega o ID do produto selecionado
-                self.db.remove_product(int(id_produto))  # Remove o produto pelo ID
-                self.carregar_produtos()  # Atualiza a tabela de produtos
+                id_produto = selected_items[0].text() 
+                self.db.remove_product(int(id_produto)) 
+                self.carregar_produtos()  
                 QMessageBox.information(self, 'Sucesso', f'Produto com ID {id_produto} removido com sucesso!')
             else:
                 QMessageBox.warning(self, 'Erro', 'Por favor, selecione um produto para remover.')
@@ -689,15 +684,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         try:
             selected_items = self.table_produtos.selectedItems()
             if selected_items:
-                id_produto = selected_items[0].text()  # Assumindo que o ID do produto está na primeira coluna
+                id_produto = selected_items[0].text()  
                 nome = self.lineEdit_nome_produto.text().strip()
                 nova_quantidade = self.lineEdit_quantidade_produto.text().strip()
 
                 if nome and nova_quantidade.isdigit():
                     nova_quantidade = int(nova_quantidade)
-                    self.db.update_product(int(id_produto), nome, nova_quantidade)  # Atualiza o produto no banco de dados
-                    self.carregar_produtos()  # Atualiza a tabela de produtos
-                    self.lineEdit_quantidade_produto.clear()  # Limpa o campo de quantidade
+                    self.db.update_product(int(id_produto), nome, nova_quantidade)  
+                    self.carregar_produtos() 
+                    self.lineEdit_quantidade_produto.clear()  
                     QMessageBox.information(self, 'Sucesso', 'Produto alterado com sucesso!')
                 else:
                     QMessageBox.warning(self, 'Erro', 'Por favor, preencha todos os campos corretamente.')

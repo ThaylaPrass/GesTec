@@ -99,16 +99,16 @@ class data_base:
 
     def get_pedidos(self):
         self.cursor.execute('''
-            SELECT cliente, data_entrega, descricao, valor_und, quantidade, valor_total FROM pedidos
+            SELECT cliente, data_entrega, nome_pedido, descricao, valor_und, quantidade, valor_total FROM pedidos
         ''')
         return self.cursor.fetchall()
 
-    def insert_order(self, cliente, data_entrega, descricao, valor_und, quantidade, valor_total):
+    def insert_order(self, cliente, data_entrega, nome_pedido, descricao, valor_und, quantidade, valor_total):
         try:
             self.cursor.execute('''
-                INSERT INTO pedidos (cliente, data_entrega, descricao, valor_und, quantidade, valor_total)
-                VALUES (?, ?, ?, ?, ?, ?)
-            ''', (cliente, data_entrega, descricao, valor_und, quantidade, valor_total))
+                INSERT INTO pedidos (cliente, data_entrega, nome_pedido, descricao, valor_und, quantidade, valor_total)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            ''', (cliente, data_entrega, nome_pedido, descricao, valor_und, quantidade, valor_total))
             self.conn.commit()
             print(f"Pedido para o cliente '{cliente}' adicionado com sucesso!")
         except sqlite3.IntegrityError:
@@ -126,21 +126,14 @@ class data_base:
         except Exception as e:
             print(f"Erro ao remover pedido: {e}")
 
-    def update_order(self, id_pedido, cliente, data_entrega, descricao, valor_und, quantidade, valor_total):
+    def update_order(self, id_pedido, cliente, data_entrega, nome_pedido, descricao, valor_und, quantidade, valor_total):
         try:
             self.cursor.execute('''
                 UPDATE pedidos
-                SET cliente = ?, data_entrega = ?, descricao = ?, valor_und = ?, quantidade = ?, valor_total = ?
+                SET cliente = ?, data_entrega = ?, nome_pedido = ?, descricao = ?, valor_und = ?, quantidade = ?, valor_total = ?
                 WHERE id = ?
-            ''', (cliente, data_entrega, descricao, valor_und, quantidade, valor_total, id_pedido))
+            ''', (cliente, data_entrega, nome_pedido,descricao, valor_und, quantidade, valor_total, id_pedido))
             self.conn.commit()
             print(f"Pedido com ID '{id_pedido}' alterado com sucesso!")
         except Exception as e:
             print(f"Erro ao alterar pedido: {e}")
-
-
-    # # HISTORICO
-
-
-
-    

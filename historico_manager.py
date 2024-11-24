@@ -68,7 +68,7 @@ class HistoricoManager:
                 return
 
             # Configurar os cabeçalhos das colunas
-            table_widget.setColumnCount(7)  # Número de colunas da tabela
+            table_widget.setColumnCount(8)  # Número de colunas da tabela
             table_widget.setHorizontalHeaderLabels([
                 "ID", "Cliente", "Data de Entrega", "Nome do Pedido", "Descrição", 
                 "Valor Unitário", "Quantidade", "Valor Total"
