@@ -314,13 +314,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.historico_manager.exibir_historico(self.table_historico, cliente, data_inicio, data_fim)
 
 
-    
     def acao_exportar_para_excel(self):
-        self.historico_manager.exportar_para_excel(self.table_historico)
-
+        cliente = self.get_cliente()
+        self.historico_manager.exportar_para_excel(self.table_historico, cliente)
 
     def acao_exportar_para_pdf(self):
-        self.historico_manager.exportar_para_pdf(self.table_historico)
+        cliente = self.get_cliente()
+        self.historico_manager.exportar_para_pdf(self.table_historico, cliente)
 
     
     # CLIENTE

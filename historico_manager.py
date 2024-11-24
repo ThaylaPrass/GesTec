@@ -91,7 +91,7 @@ class HistoricoManager:
             print(f"Erro ao exibir histórico: {e}")
 
     
-    def exportar_para_excel(self, table_widget):
+    def exportar_para_excel(self, table_widget, cliente):
         try:
             # Cria uma lista para armazenar os dados
             dados = []
@@ -108,9 +108,14 @@ class HistoricoManager:
             colunas = [table_widget.horizontalHeaderItem(i).text() for i in range(table_widget.columnCount())]
             df = pd.DataFrame(dados, columns=colunas)
 
+            # Adiciona um título na primeira linha do DataFrame
+            titulo = f"Relatório ({cliente})"
+            df_titulo = pd.DataFrame([[titulo] + [''] * (len(colunas) - 1)], columns=colunas)
+            df = pd.concat([df_titulo, df], ignore_index=True)
+
             data_hora_atual = datetime.now().strftime("%Y%m%d_%H%M%S")  # Formata a data e hora
             # Caminho fixo para salvar o arquivo Excel
-            caminho_arquivo =  f"C:/Users/thayl/OneDrive/Área de Trabalho/Projeto 4 Semestre/Excel/historico_{data_hora_atual}.xlsx"
+            caminho_arquivo = f"C:/Users/thayl/OneDrive/Área de Trabalho/Projeto 4 Semestre/Excel/historico_{cliente}_{data_hora_atual}.xlsx"
 
             # Salva o DataFrame no caminho especificado
             df.to_excel(caminho_arquivo, index=False)
@@ -121,23 +126,19 @@ class HistoricoManager:
 
 
 
-    def exportar_para_pdf(self, table_widget):
+    def exportar_para_pdf(self, table_widget, cliente):
         try:
-            
             data_hora_atual = datetime.now().strftime("%Y%m%d_%H%M%S")
-            
-            
             caminho_pdf = f"C:/Users/thayl/OneDrive/Área de Trabalho/Projeto 4 Semestre/PDF/historico_{data_hora_atual}.pdf"
             c = canvas.Canvas(caminho_pdf, pagesize=landscape(A4))
 
-            
             largura, altura = landscape(A4)
             y = altura - 40  # Margem superior
 
             # Títulos das colunas
             colunas = [table_widget.horizontalHeaderItem(i).text() for i in range(table_widget.columnCount())]
             c.setFont("Helvetica-Bold", 12)
-            c.drawCentredString(largura / 2, y, "Relatório de Histórico")
+            c.drawCentredString(largura / 2, y, f"Relatório de Histórico ({cliente})")
             y -= 20
 
             # Imprimir cabeçalhos
@@ -160,6 +161,12 @@ class HistoricoManager:
                     c.showPage()
                     c.setFont("Helvetica", 10)
                     y = altura - 50
+
+            c.save()
+            QMessageBox.information(None, "Sucesso", f"Arquivo PDF exportado com sucesso para:\n{caminho_pdf}")
+        except Exception as e:
+            print(f"Ocorreu um erro ao exportar: {e}")
+            QMessageBox.critical(None, "Erro", f"Ocorreu um erro ao exportar o PDF:\n{e}")
 
             # # Adicionar linhas à tabela
             # c.setLineWidth(1)
