@@ -25,6 +25,7 @@ class HistoricoManager:
                     p.id,
                     p.cliente,
                     p.data_entrega,
+                    p.nome_pedido,
                     p.descricao,
                     p.valor_und,
                     p.quantidade,
@@ -49,7 +50,7 @@ class HistoricoManager:
         
     def setup_table(self, table_widget):
         table_widget.setColumnCount(7)  # Define o número de colunas
-        table_widget.setHorizontalHeaderLabels(['id_pedido', 'Cliente', 'Data de Entrega', 'Descrição', 'Valor Unidade', 'Quantidade', 'Valor Total'])
+        table_widget.setHorizontalHeaderLabels(['id_pedido', 'Cliente', 'Data de Entrega', 'Nome do Pedido', 'Descrição', 'Valor Unidade', 'Quantidade', 'Valor Total'])
             
     def exibir_historico(self, table_widget, cliente, data_inicio, data_fim):
         try:
@@ -69,7 +70,7 @@ class HistoricoManager:
             # Configurar os cabeçalhos das colunas
             table_widget.setColumnCount(7)  # Número de colunas da tabela
             table_widget.setHorizontalHeaderLabels([
-                "ID", "Cliente", "Data de Entrega", "Descrição", 
+                "ID", "Cliente", "Data de Entrega", "Nome do Pedido", "Descrição", 
                 "Valor Unitário", "Quantidade", "Valor Total"
             ])
 

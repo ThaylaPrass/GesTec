@@ -126,6 +126,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.lineEdit_valor_und = self.findChild(QLineEdit, 'lineEdit_valor_und') 
         self.lineEdit_valor_total = self.findChild(QLineEdit, 'lineEdit_valor_total') 
         self.lineEdit_pedidos_quantidade = self.findChild(QLineEdit, 'lineEdit_pedidos_quantidade')
+        self.lineEdit_pedido_nome = self.findChild(QLineEdit, 'lineEdit_pedidos_nome')
         # self.lineEdit_pedido_cliente = self.findChild(QLineEdit, 'lineEdit_pedido_cliente')
         self.comboBox_clientes = self.findChild(QComboBox, 'comboBox_clientes')        
         self.lineEdit_data_entrega = self.findChild(QLineEdit, 'lineEdit_data_entrega') 
@@ -456,6 +457,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         try:
             cliente = self.comboBox_clientes.currentText().strip() if self.comboBox_clientes is not None else None
             data_entrega = self.lineEdit_data_entrega.text().strip() if self.lineEdit_data_entrega is not None else None
+            nome_pedido = self.lineEdit_pedido_nome.text().strip() if self.lineEdit_pedido_nome is not None else None
             descricao = self.lineEdit_pedido_descricao.text().strip() if self.lineEdit_pedido_descricao is not None else None
             valor_und = self.lineEdit_valor_und.text().strip() if self.lineEdit_valor_und is not None else None
             quantidade = self.lineEdit_pedidos_quantidade.text().strip() if self.lineEdit_pedidos_quantidade is not None else None
@@ -466,13 +468,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             
             print(f"Cliente: {cliente}")
             print(f"Data de Entrega: {data_entrega}")
+            print(f"Nome do Pedido: {nome_pedido}")
             print(f"Descrição: {descricao}")
             print(f"Valor Unitário: {valor_und}")
             print(f"Quantidade: {quantidade}")
             print(f"Valor Total: {valor_total}")
             
 
-            if cliente and data_entrega and descricao and valor_und and quantidade and valor_total:
+            if cliente and data_entrega and nome_pedido and descricao and valor_und and quantidade and valor_total:
                 # Valida a data de entrega
                 try:
                     data_entrega_formatada = datetime.strptime(data_entrega, '%d-%m-%Y').date()
@@ -481,9 +484,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     QMessageBox.warning(self, 'Erro', 'Por favor, insira uma data de entrega válida no formato dd-mm-yyyy.')
                     return
                 
-                self.db.insert_order(cliente, data_entrega, descricao, valor_und, quantidade, valor_total)
+                self.db.insert_order(cliente, data_entrega, nome_pedido, descricao, valor_und, quantidade, valor_total)
                 self.carregar_pedidos()  # Atualiza a tabela de pedidos
                 self.lineEdit_data_entrega.clear()
+                self.lineEdit_pedido_nome.clear()
                 self.lineEdit_pedido_descricao.clear()
                 self.lineEdit_valor_und.clear()
                 self.lineEdit_pedidos_quantidade.clear()
@@ -502,6 +506,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             
             cliente = self.comboBox_clientes.currentText().strip() if self.comboBox_clientes is not None else None
             data_entrega = self.lineEdit_data_entrega.text().strip() if self.lineEdit_data_entrega is not None else None
+            nome_pedido = self.lineEdit_pedido_nome.text().strip() if self.lineEdit_pedido_nome is not None else None
             descricao = self.lineEdit_pedido_descricao.text().strip() if self.lineEdit_pedido_descricao is not None else None
             valor_und = self.lineEdit_valor_und.text().strip() if self.lineEdit_valor_und is not None else None
             quantidade = self.lineEdit_pedidos_quantidade.text().strip() if self.lineEdit_pedidos_quantidade is not None else None
@@ -509,14 +514,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             
             
             # Garantir que todos os campos estão preenchidos
-            if cliente and data_entrega and descricao and valor_und and quantidade and valor_total:
+            if cliente and data_entrega and nome_pedido and descricao and valor_und and quantidade and valor_total:
                 # Pega o ID do pedido selecionado na tabela
                 selected_items = self.table_pedidos.selectedItems()
                 if selected_items:
                     id_pedido = selected_items[0].text()  # ID do pedido selecionado
 
                     # Chama o método de update (alteração) no banco de dados
-                    self.db.update_order( id_pedido, cliente, data_entrega, descricao, valor_und, quantidade, valor_total)
+                    self.db.update_order( id_pedido, cliente, data_entrega, nome_pedido, descricao, valor_und, quantidade, valor_total)
                     
                     # Atualiza a tabela de pedidos após a alteração
                     self.carregar_pedidos()
@@ -554,8 +559,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             QMessageBox.critical(self, 'Erro', 'Ocorreu um erro ao remover o pedido.')
 
     def limpar_campos_pedido(self):
-        self.lineEdit_data_entrega.clear()
         self.comboBox_clientes.clear()
+        self.lineEdit_data_entrega.clear()
+        self.lineEdit_pedido_nome.clear()
         self.lineEdit_pedido_descricao.clear()
         self.lineEdit_valor_und.clear()
         self.lineEdit_pedidos_quantidade.clear()
@@ -614,6 +620,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     #     except Exception as e:
     #         print(f"Erro ao exibir histórico: {e}")
+
 
     
 # PRODUTO
@@ -703,8 +710,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    window = Login()
-    # window = MainWindow()
+    # window = Login()
+    window = MainWindow()
     window.show()
     sys.exit(app.exec_())
 
