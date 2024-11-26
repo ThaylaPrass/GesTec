@@ -20,22 +20,39 @@ class HistoricoManager:
 
             print(f"Consultando histórico para cliente: {cliente}, entre {data_inicio_conv} e {data_fim_conv}")
 
-            query = """
-                SELECT 
-                    p.id,
-                    p.cliente,
-                    p.data_entrega,
-                    p.nome_pedido,
-                    p.descricao,
-                    p.valor_und,
-                    p.quantidade,
-                    p.valor_total
-                FROM pedidos p
-                WHERE p.cliente = ?
-                AND p.data_entrega BETWEEN ? AND ?
-                ORDER BY p.data_entrega DESC
-            """
-            params = [cliente, data_inicio_conv, data_fim_conv]
+            if cliente == "Todos os clientes":
+                query = """
+                    SELECT 
+                        p.id,
+                        p.cliente,
+                        p.data_entrega,
+                        p.nome_pedido,
+                        p.descricao,
+                        p.valor_und,
+                        p.quantidade,
+                        p.valor_total
+                    FROM pedidos p
+                    WHERE p.data_entrega BETWEEN ? AND ?
+                    ORDER BY p.data_entrega DESC
+                """
+                params = [data_inicio_conv, data_fim_conv]
+            else:
+                query = """
+                    SELECT 
+                        p.id,
+                        p.cliente,
+                        p.data_entrega,
+                        p.nome_pedido,
+                        p.descricao,
+                        p.valor_und,
+                        p.quantidade,
+                        p.valor_total
+                    FROM pedidos p
+                    WHERE p.cliente = ?
+                    AND p.data_entrega BETWEEN ? AND ?
+                    ORDER BY p.data_entrega DESC
+                """
+                params = [cliente, data_inicio_conv, data_fim_conv]
 
             cursor.execute(query, params)
             resultados = cursor.fetchall()
@@ -90,7 +107,7 @@ class HistoricoManager:
         except Exception as e:
             print(f"Erro ao exibir histórico: {e}")
 
-    
+            
     def exportar_para_excel(self, table_widget, cliente):
         try:
             # Cria uma lista para armazenar os dados

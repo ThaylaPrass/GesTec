@@ -225,6 +225,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             # Preenche o ComboBox de histórico 
             self.comboBox_clientes_historico.clear()
             if clientes:
+                self.comboBox_clientes_historico.addItem("Todos os clientes")  # Adiciona a opção para selecionar todos
                 for cliente in clientes:
                     self.comboBox_clientes_historico.addItem(cliente[0])
             else:
@@ -328,15 +329,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def carregar_clientes(self):
         try:
-            clientes = self.db.get_clients()  #  lista de clientes do banco de dados
+            clientes = self.db.get_clients()  
 
-            # Preencher o QComboBox com os nomes dos clientes
+            
             self.comboBox_clientes.clear()
             self.comboBox_clientes.addItem("Selecione um cliente")
             for _, nome, _ in clientes:
                 self.comboBox_clientes.addItem(nome)
 
-            # Preencher o QComboBox de histórico com os nomes dos clientes
+            
             self.comboBox_clientes_historico.clear()
             self.comboBox_clientes_historico.addItem("Selecione um cliente")
             for _, nome, _ in clientes:
@@ -497,44 +498,34 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             print(f"Erro ao adicionar pedido: {e}")
             QMessageBox.critical(self, 'Erro', 'Ocorreu um erro ao cadastrar o pedido.')
 
+
     def alterar_pedido(self):
         try:
-            
-            cliente = self.comboBox_clientes.currentText().strip() if self.comboBox_clientes is not None else None
-            data_entrega = self.lineEdit_data_entrega.text().strip() if self.lineEdit_data_entrega is not None else None
-            nome_pedido = self.lineEdit_pedido_nome.text().strip() if self.lineEdit_pedido_nome is not None else None
-            descricao = self.lineEdit_pedido_descricao.text().strip() if self.lineEdit_pedido_descricao is not None else None
-            valor_und = self.lineEdit_valor_und.text().strip() if self.lineEdit_valor_und is not None else None
-            quantidade = self.lineEdit_pedidos_quantidade.text().strip() if self.lineEdit_pedidos_quantidade is not None else None
-            valor_total = self.lineEdit_valor_total.text().strip() if self.lineEdit_valor_total is not None else None
-            
-            
-            
-            if cliente and data_entrega and nome_pedido and descricao and valor_und and quantidade and valor_total:
+            selected_items = self.table_pedidos.selectedItems()
+            if selected_items:
+                row = self.table_pedidos.currentRow()
                 
-                selected_items = self.table_pedidos.selectedItems()
-                if selected_items:
-                    id_pedido = selected_items[0].text() 
+                id_pedido = self.table_pedidos.item(row, 0).text().strip()
+                cliente = self.table_pedidos.item(row, 1).text().strip()
+                data_entrega = self.table_pedidos.item(row, 2).text().strip()
+                nome_pedido = self.table_pedidos.item(row, 3).text().strip()
+                descricao = self.table_pedidos.item(row, 4).text().strip()
+                valor_und = self.table_pedidos.item(row, 5).text().strip()
+                quantidade = self.table_pedidos.item(row, 6).text().strip()
+                valor_total = self.table_pedidos.item(row, 7).text().strip()
 
-                    
-                    self.db.update_order( id_pedido, cliente, data_entrega, nome_pedido, descricao, valor_und, quantidade, valor_total)
-                    
-                    
+                if cliente and data_entrega and nome_pedido and descricao and valor_und and quantidade and valor_total:
+                    self.db.update_order(id_pedido, cliente, data_entrega, nome_pedido, descricao, valor_und, quantidade, valor_total)
                     self.carregar_pedidos()
-
-                    
                     self.limpar_campos_pedido()
-
-                    
                     QMessageBox.information(self, 'Sucesso', 'Pedido alterado com sucesso!')
                 else:
-                    QMessageBox.warning(self, 'Erro', 'Por favor, selecione um pedido para alterar.')
+                    QMessageBox.warning(self, 'Erro', 'Por favor, preencha todos os campos.')
             else:
-                QMessageBox.warning(self, 'Erro', 'Por favor, preencha todos os campos.')
+                QMessageBox.warning(self, 'Erro', 'Por favor, selecione um pedido para alterar.')
         except Exception as e:
             print(f"Erro ao alterar pedido: {e}")
             QMessageBox.critical(self, 'Erro', 'Ocorreu um erro ao alterar o pedido.')
-
 
 
     def deletar_pedido(self):
